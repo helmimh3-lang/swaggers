@@ -16,7 +16,7 @@
           "Authentication"
         ],
         "summary": "Acquire OAuth 2.0 Access Token",
-        "description": "Retrieve access token using Client Credentials flow for subsequent API calls",
+        "description": "AAAA Retrieve access token using Client Credentials flow for subsequent API calls",
         "consumes": [
           "application/x-www-form-urlencoded"
         ],
