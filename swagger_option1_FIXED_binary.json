@@ -107,8 +107,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "binary",
-              "description": "Raw binary stream of the file content"
+              "format": "byte",
+              "description": "Raw byte stream of the file content"
             }
           }
         ],
