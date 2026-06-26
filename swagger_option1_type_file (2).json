@@ -1,0 +1,760 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "SharePoint Opinion Document Management API - Option 1 (type: file)",
+    "version": "1.0.0",
+    "description": "Microsoft Graph API integration - Option 1: Using type: file for binary content"
+  },
+  "host": "graph.microsoft.com",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/oauth2/v2.0/token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Acquire OAuth 2.0 Access Token",
+        "description": "Retrieve access token using Client Credentials flow for subsequent API calls",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "formData",
+            "description": "Azure AD Application Client ID",
+            "required": true,
+            "type": "string",
+            "default": "1a7702a9-7dcf-4fe2-abb2-ab4e20f8000e"
+          },
+          {
+            "name": "scope",
+            "in": "formData",
+            "description": "OAuth 2.0 scope",
+            "required": true,
+            "type": "string",
+            "default": "https://graph.microsoft.com/.default"
+          },
+          {
+            "name": "grant_type",
+            "in": "formData",
+            "description": "Grant type for Client Credentials flow",
+            "required": true,
+            "type": "string",
+            "default": "client_credentials"
+          },
+          {
+            "name": "client_secret",
+            "in": "formData",
+            "description": "Azure AD Application Client Secret",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token acquired successfully",
+            "schema": {
+              "$ref": "#/definitions/TokenResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters"
+          },
+          "401": {
+            "description": "Authentication failed"
+          }
+        }
+      }
+    },
+    "/v1.0/drives/b!sSUAtvCgMUm0BFEnFxD3h0sY36Mn1aJLiFrVVaoXUhIzGqL5TbOMQ6oDs5ryvI_X/root:/{fileName}:/content": {
+      "post": {
+        "tags": [
+          "DraftArea"
+        ],
+        "summary": "Upload Document to DraftArea Library",
+        "description": "Upload a document file to the DraftArea library in SharePoint - Option 1: type file",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "fileName",
+            "in": "path",
+            "description": "Name of the file to upload (e.g., Minuta_Meeting_20260313.docx)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer token from OAuth 2.0 token endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "description": "MIME type of the file being uploaded",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+              "application/pdf",
+              "application/msword",
+              "application/vnd.ms-excel",
+              "application/vnd.ms-powerpoint",
+              "text/plain",
+              "text/csv",
+              "image/jpeg",
+              "image/png",
+              "application/octet-stream"
+            ]
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "Binary file content",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "File uploaded successfully",
+            "schema": {
+              "$ref": "#/definitions/DriveItemResponse"
+            }
+          },
+          "200": {
+            "description": "File uploaded successfully (existing file updated)",
+            "schema": {
+              "$ref": "#/definitions/DriveItemResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid file or request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or expired token"
+          },
+          "413": {
+            "description": "File too large"
+          }
+        }
+      }
+    },
+    "/v1.0/drives/b!sSUAtvCgMUm0BFEnFxD3h0sY36Mn1aJLiFrVVaoXUhJQzYnyN30XRrhXWAL8pDob/root:/{fileName}:/content": {
+      "put": {
+        "tags": [
+          "Opinion"
+        ],
+        "summary": "Upload Document to Opinion Library",
+        "description": "Upload a finalized opinion document to the Opinion library in SharePoint - Option 1: type file",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "fileName",
+            "in": "path",
+            "description": "Name of the file to upload",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer token from OAuth 2.0 token endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "description": "MIME type of the file being uploaded",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+              "application/pdf",
+              "application/msword",
+              "application/vnd.ms-excel",
+              "application/vnd.ms-powerpoint",
+              "text/plain",
+              "text/csv",
+              "image/jpeg",
+              "image/png",
+              "application/octet-stream"
+            ]
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "Binary file content",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "File uploaded successfully",
+            "schema": {
+              "$ref": "#/definitions/DriveItemResponse"
+            }
+          },
+          "200": {
+            "description": "File uploaded successfully (existing file updated)",
+            "schema": {
+              "$ref": "#/definitions/DriveItemResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid file or request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or expired token"
+          },
+          "413": {
+            "description": "File too large"
+          }
+        }
+      }
+    },
+    "/v1.0/drives/b!sSUAtvCgMUm0BFEnFxD3h0sY36Mn1aJLiFrVVaoXUhIzGqL5TbOMQ6oDs5ryvI_X/items/{driveItemId}/listItem/fields": {
+      "patch": {
+        "tags": [
+          "DraftArea"
+        ],
+        "summary": "Update Document Metadata in DraftArea Library",
+        "description": "Update metadata fields for a document in the DraftArea library",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "driveItemId",
+            "in": "path",
+            "description": "Drive Item ID returned from file upload",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer token from OAuth 2.0 token endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "description": "Content type (for consistency)",
+            "required": false,
+            "type": "string",
+            "default": "application/json"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Metadata fields to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MetadataUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Metadata updated successfully",
+            "schema": {
+              "$ref": "#/definitions/MetadataUpdateResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid metadata or request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or expired token"
+          },
+          "404": {
+            "description": "Drive item not found"
+          }
+        }
+      }
+    },
+    "/v1.0/drives/b!sSUAtvCgMUm0BFEnFxD3h0sY36Mn1aJLiFrVVaoXUhJQzYnyN30XRrhXWAL8pDob/items/{driveItemId}/listItem/fields": {
+      "patch": {
+        "tags": [
+          "Opinion"
+        ],
+        "summary": "Update Document Metadata in Opinion Library",
+        "description": "Update metadata fields for a document in the Opinion library",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "driveItemId",
+            "in": "path",
+            "description": "Drive Item ID returned from file upload",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer token from OAuth 2.0 token endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "description": "Content type (for consistency)",
+            "required": false,
+            "type": "string",
+            "default": "application/json"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Metadata fields to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MetadataUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Metadata updated successfully",
+            "schema": {
+              "$ref": "#/definitions/MetadataUpdateResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid metadata or request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or expired token"
+          },
+          "404": {
+            "description": "Drive item not found"
+          }
+        }
+      }
+    },
+    "/v1.0/drives/b!sSUAtvCgMUm0BFEnFxD3h0sY36Mn1aJLiFrVVaoXUhIzGqL5TbOMQ6oDs5ryvI_X/items/{driveItemId}": {
+      "delete": {
+        "tags": [
+          "DraftArea"
+        ],
+        "summary": "Delete Document from DraftArea Library",
+        "description": "Delete a document file from the DraftArea library",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "driveItemId",
+            "in": "path",
+            "description": "Drive Item ID of the file to delete",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer token from OAuth 2.0 token endpoint",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "File deleted successfully (no content)"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or expired token"
+          },
+          "404": {
+            "description": "Drive item not found"
+          }
+        }
+      }
+    },
+    "/v1.0/drives/b!sSUAtvCgMUm0BFEnFxD3h0sY36Mn1aJLiFrVVaoXUhJQzYnyN30XRrhXWAL8pDob/items/{driveItemId}": {
+      "delete": {
+        "tags": [
+          "Opinion"
+        ],
+        "summary": "Delete Document from Opinion Library",
+        "description": "Delete a document file from the Opinion library",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "driveItemId",
+            "in": "path",
+            "description": "Drive Item ID of the file to delete",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer token from OAuth 2.0 token endpoint",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "File deleted successfully (no content)"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or expired token"
+          },
+          "404": {
+            "description": "Drive item not found"
+          }
+        }
+      }
+    },
+    "/v1.0/sites/resources.deloitte.com,b60025b1-a0f0-4931-b404-51271710f787,a3df184b-d527-4ba2-885a-d555aa175212/lists/a888ef5f-f49e-4d10-aaf3-3c620e7720d6/items": {
+      "post": {
+        "tags": [
+          "AssistantTickets"
+        ],
+        "summary": "Create Ticket in AssistantTickets List",
+        "description": "Create a new ticket/item in the AssistantTickets SharePoint list",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer token from OAuth 2.0 token endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "description": "Content type",
+            "required": false,
+            "type": "string",
+            "default": "application/json"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Ticket fields wrapped in 'fields' object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TicketCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Ticket created successfully",
+            "schema": {
+              "$ref": "#/definitions/TicketCreateResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid ticket data or request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or expired token"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TokenResponse": {
+      "type": "object",
+      "properties": {
+        "token_type": {
+          "type": "string",
+          "example": "Bearer"
+        },
+        "expires_in": {
+          "type": "integer",
+          "format": "int32",
+          "example": 3599
+        },
+        "ext_expires_in": {
+          "type": "integer",
+          "format": "int32",
+          "example": 3599
+        },
+        "access_token": {
+          "type": "string",
+          "description": "JWT access token for subsequent API calls",
+          "example": "eyJ0eXAiOiJKV1Qi..."
+        }
+      }
+    },
+    "DriveItemResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique Drive Item ID",
+          "example": "01U22VFG6ISPLIRDIPBNGLATE6HN2Y72AQ"
+        },
+        "name": {
+          "type": "string",
+          "description": "File name",
+          "example": "Minuta_Meeting_20260313.docx"
+        },
+        "webUrl": {
+          "type": "string",
+          "description": "Direct URL to the file in SharePoint",
+          "example": "https://resources.deloitte.com/sites/DOL-c-IT-AeA-NpdTools/toolopinion/_layouts/15/Doc.aspx?..."
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64",
+          "description": "File size in bytes",
+          "example": 44209
+        },
+        "createdDateTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "File creation timestamp",
+          "example": "2026-04-24T12:33:11Z"
+        }
+      }
+    },
+    "MetadataUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "FY": {
+          "type": "string",
+          "example": "2026"
+        },
+        "GMDMID": {
+          "type": "string",
+          "example": "G0001112223"
+        },
+        "ClientName": {
+          "type": "string",
+          "example": "Contoso S.p.A."
+        },
+        "OpportunityID": {
+          "type": "string",
+          "example": "OPP-98765"
+        },
+        "EngPartner": {
+          "type": "string",
+          "example": "partner@deloitte.it"
+        },
+        "EngManager": {
+          "type": "string",
+          "example": "manager@deloitte.it"
+        },
+        "DataBilancio": {
+          "type": "string",
+          "format": "date",
+          "example": "2025-12-31"
+        },
+        "DataEmissione": {
+          "type": "string",
+          "format": "date",
+          "example": "2026-03-15"
+        },
+        "Requestor": {
+          "type": "string",
+          "example": "requestor@deloitte.it"
+        },
+        "TipoBilancio": {
+          "type": "string",
+          "enum": ["Civilistico", "Consolidato"],
+          "example": "Civilistico"
+        },
+        "PrincipiDiRiferimento": {
+          "type": "string",
+          "enum": ["IFRS", "ITA GAAP"],
+          "example": "IFRS"
+        },
+        "PrincipiDiRevisione": {
+          "type": "string",
+          "enum": ["ISA", "ISA Italia"],
+          "example": "ISA"
+        },
+        "TipoIncarico": {
+          "type": "string",
+          "enum": ["Incarico di legge", "Volontario"],
+          "example": "Incarico di legge"
+        },
+        "TipoEmissione": {
+          "type": "string",
+          "enum": ["OPINION", "DRAFT"],
+          "example": "DRAFT"
+        },
+        "SocietaQuotata": {
+          "type": "string",
+          "enum": ["EU REG", "Non quotata"],
+          "example": "EU REG"
+        },
+        "KeyAuditMatters": {
+          "type": "string",
+          "example": "SI 2"
+        },
+        "KamNuove": {
+          "type": "string",
+          "enum": ["SI", "NO"],
+          "example": "SI"
+        },
+        "BilancioAbbreviato": {
+          "type": "string",
+          "enum": ["SI", "NO"],
+          "example": "NO"
+        },
+        "IncaricoTerzoSettore": {
+          "type": "string",
+          "enum": ["SI", "NO"],
+          "example": "NO"
+        },
+        "RichiamiDiInformativa": {
+          "type": "string",
+          "enum": ["SI", "NO"],
+          "example": "SI"
+        },
+        "RichiamoContinuita": {
+          "type": "string",
+          "enum": ["INCERTEZZE", "NO"],
+          "example": "INCERTEZZE"
+        },
+        "PresentiLimitazioni": {
+          "type": "string",
+          "enum": ["SI", "NO"],
+          "example": "NO"
+        },
+        "PresentiEccezioni": {
+          "type": "string",
+          "enum": ["SI", "NO"],
+          "example": "NO"
+        },
+        "TipoOpinion": {
+          "type": "string",
+          "enum": ["CLEAN", "CON RILIEVI"],
+          "example": "CLEAN"
+        }
+      }
+    },
+    "MetadataUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "FileLeafRef": {
+          "type": "string",
+          "example": "Minuta_Meeting_20260313.docx"
+        },
+        "GMDMID": {
+          "type": "string",
+          "example": "G0001112223"
+        },
+        "FY": {
+          "type": "string",
+          "example": "2026"
+        },
+        "Modified": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2026-04-24T13:09:19Z"
+        }
+      }
+    },
+    "TicketCreateRequest": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "object",
+          "properties": {
+            "Title": {
+              "type": "string",
+              "example": "Widget"
+            },
+            "Requestor": {
+              "type": "string",
+              "example": "requestor@deloitte.it"
+            },
+            "RequestType": {
+              "type": "string",
+              "example": "Text"
+            },
+            "GMDMID": {
+              "type": "string",
+              "example": "G0001112223"
+            },
+            "FY": {
+              "type": "string",
+              "example": "2026"
+            },
+            "OpportunityID": {
+              "type": "string",
+              "example": "OPP-012345"
+            },
+            "EngManager": {
+              "type": "string",
+              "example": "manager@deloitte.it"
+            },
+            "EngPartner": {
+              "type": "string",
+              "example": "partner@deloitte.it"
+            }
+          }
+        }
+      }
+    },
+    "TicketCreateResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "1"
+        },
+        "createdDateTime": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2026-04-24T14:18:25Z"
+        },
+        "webUrl": {
+          "type": "string",
+          "example": "https://resources.deloitte.com/sites/DOL-c-IT-AeA-NpdTools/toolopinion/Lists/AssistantTickets/1_.000"
+        }
+      }
+    }
+  }
+}
